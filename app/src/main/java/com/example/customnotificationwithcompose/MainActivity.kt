@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -119,6 +120,58 @@ fun MainScreen() {
         }
     }
 
+
+    fun largeTextNotification(context: Context, channelId: String) {
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle("hello world")
+            .setContentText("hello world")
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText("hello world")
+            )
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        with(NotificationManagerCompat.from(context)) {
+            notify(0, builder.build())
+        }
+    }
+
+    fun largeTextWithBigIconNotification(context: Context, channelId: String) {
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle("hello world")
+            .setContentText("hello world")
+            .setLargeIcon(BitmapFactory.decodeResource(context.resources , R.drawable.ic_launcher_background))
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(
+                        "hello worldd"
+                    )
+            )
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        with(NotificationManagerCompat.from(context)) {
+            notify(0, builder.build())
+        }
+    }
+
+    fun bigPictureWithThumbnailNotification(context: Context, channelId: String) {
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle("hello world")
+            .setContentText("hello world")
+            .setLargeIcon(BitmapFactory.decodeResource(context.resources , R.drawable.ic_launcher_background))
+            .setStyle(
+                NotificationCompat.BigPictureStyle()
+                    .bigPicture(BitmapFactory.decodeResource(context.resources , R.drawable.ic_launcher_background))
+                    .bigLargeIcon(null)
+            )
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        with(NotificationManagerCompat.from(context)) {
+            notify(0, builder.build())
+        }
+    }
+
+
     fun navigateToComposable(context: Context,channelId: String){
         val taskDetailIntent = Intent(
             Intent.ACTION_VIEW,
@@ -161,6 +214,18 @@ fun MainScreen() {
 
         Button(onClick = { navigateToComposable(context, channelId)}) {
             Text(text = "navigate to composable notification")
+        }
+
+        Button(onClick = { largeTextNotification(context, channelId)}) {
+            Text(text = "large text notification")
+        }
+
+        Button(onClick = { largeTextWithBigIconNotification(context, channelId)}) {
+            Text(text = "large text with big icon notification")
+        }
+
+        Button(onClick = { bigPictureWithThumbnailNotification(context, channelId)}) {
+            Text(text = "big picture with thumbnail notification")
         }
     }
 }
