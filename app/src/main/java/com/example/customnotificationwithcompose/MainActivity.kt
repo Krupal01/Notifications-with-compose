@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.widget.RemoteViews
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.customnotificationwithcompose.ui.theme.CustomNotificationWithComposeTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -195,6 +197,25 @@ fun MainScreen() {
         }
     }
 
+    fun customNotification(context: Context,channelId : String){
+
+        val expandedView = RemoteViews(context.packageName, R.layout.custom_notification_expanded_layout)
+        val collapsedView = RemoteViews(context.packageName, R.layout.custom_notification_layout)
+
+        expandedView.setTextViewText(R.id.content_title,"hello world")
+        collapsedView.setTextViewText(R.id.content_title,"hello world")
+
+        val notificationBuilder = NotificationCompat.Builder(context,channelId)
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+            .setCustomContentView(collapsedView)
+            .setCustomBigContentView(expandedView)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        with(NotificationManagerCompat.from(context)) {
+            notify(0, notificationBuilder.build())
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally ,
@@ -226,6 +247,10 @@ fun MainScreen() {
 
         Button(onClick = { bigPictureWithThumbnailNotification(context, channelId)}) {
             Text(text = "big picture with thumbnail notification")
+        }
+
+        Button(onClick = { customNotification(context, channelId)}) {
+            Text(text = "custom notification")
         }
     }
 }
