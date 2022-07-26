@@ -21,7 +21,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.EXTRA_NOTIFICATION_ID
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.customnotificationwithcompose.ui.theme.CustomNotificationWithComposeTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +47,10 @@ class MainActivity : ComponentActivity() {
 
                     Button(onClick = { actionNotification(context, channelId)}) {
                         Text(text = "show action notification")
+                    }
+
+                    Button(onClick = { progressbarNotification(context, channelId)}) {
+                        Text(text = "show progress notification")
                     }
                 }
             }
@@ -81,6 +88,34 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun progressbarNotification(context: Context,channelId: String){
+        val builder = NotificationCompat.Builder(this, channelId).apply {
+            setContentTitle("Picture Download")
+            setContentText("Download in progress")
+            setSmallIcon(R.drawable.ic_launcher_background)
+            priority = NotificationCompat.PRIORITY_LOW
+        }
+        val PROGRESS_MAX = 100
+        var PROGRESS_CURRENT = 0
+        NotificationManagerCompat.from(this).apply {
+            builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false)
+            notify(0, builder.build())
+
+            for (i in 1..100){
+                if (i == 100){
+                    builder.setContentText("Download complete")
+                        .setProgress(0, 0, false)
+                    notify(0, builder.build())
+                }
+                lifecycleScope.launch {
+                    delay(500)
+                    PROGRESS_CURRENT = i
+                    builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false)
+                    notify(0, builder.build())
+                }
+            }
+        }
+    }
 
     private fun createNotificationChannel(context: Context, channelId : String){
         val channelName = "my channel"
